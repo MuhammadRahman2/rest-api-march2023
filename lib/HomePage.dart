@@ -1,8 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
+import 'package:rest_api_with_natishkumarsing/model/users.dart';
+import 'package:rest_api_with_natishkumarsing/services/product_api.dart';
+import 'package:rest_api_with_natishkumarsing/services/user_api.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,7 +12,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<dynamic> users = [];
+  // List<Users> users = [];
+  UserApi userApi = UserApi();
+  ProductApi productApi = ProductApi();
+  @override
+  void initState() {
+    fetcthFromApi();
+    super.initState();
+  }
+
+  Future<void> fetcthFromApi() async {
+    final response = await productApi.fetchUserData();
+    setState(() {
+      // users = response;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,37 +35,59 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Rest Api'),
       ),
       body: ListView.builder(
-        itemCount: users.length,
+        itemCount: productApi.product.length,
         itemBuilder: (context, index) {
-          final user = users[index];
+          final user = productApi.product[index];
           // print(users[index]);
-          print('atteribute: ${users[index]['attributes']['title']}');
+          // print('atteribute: ${users[index].email}');
           return ListTile(
-              // leading: CircleAvatar(child: Text('${index + 1}')),
-              title: Text(user['attributes']['title']),
-              );
+            // leading: CircleAvatar(child: Text('${index + 1}')),
+            title: Text(user.id.toString()),
+            subtitle: Text(user.attribute.title.toString()),
+          );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          fetchUserData();
-        },
-        child: Icon(Icons.add),
       ),
     );
   }
 
-  void fetchUserData() async {
-    debugPrint('fetchUser');
-    const baseUrl = 'https://fashionavia.herokuapp.com/api/products';
-    final uriParse = Uri.parse(baseUrl);
-    Response response = await http.get(uriParse);
-    final body = response.body;
-    final json = jsonDecode(body);
-    setState(() {
-      users = json['data'];
-    });
+  // void fetchUserData() async {
+  //   debugPrint('fetchUser');
+  //   // https://randomuser.me/api/?results=10
+  //   const baseUrl = 'https://randomuser.me/api/?results=10';
+  //   final uriParse = Uri.parse(baseUrl);
+  //   Response response = await http.get(uriParse);
+  //   final body = response.body;
+  //   final json = jsonDecode(body);
+  //   final result = json['results'] as List<dynamic>;
 
-    debugPrint('fetchUser complete');
-  }
+  //   setState(() {
+  //     // for (Map i in result) {
+  //     //   users.add(Users(
+  //     //       gender: i['gender'],
+  //     //       email: i['email'],
+  //     //       phone: i['phone'],
+  //     //       cell: i['cell'],
+  //     //       nat: i['nat']));
+  //     // }
+
+  //     // second method
+  //     // users = result.map((e) {
+  //     //   return Users(
+  //     //       gender: e['gender'],
+  //     //       email: e['email'],
+  //     //       phone: e['phone'],
+  //     //       cell: e['cell'],
+  //     //       nat: e['nat']);
+  //     // }).toList();
+
+  //     // 3rd method  make a mehtod in users class for them
+  //     if (response.statusCode == 200) {
+  //       for (Map<String, dynamic> i in result) {
+  //         users.add(Users.fromJson(i));
+  //       }
+  //     }
+  //   });
+
+  //   debugPrint('fetchUser complete');
+  // }
 }
