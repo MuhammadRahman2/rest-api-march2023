@@ -3,21 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:rest_api_with_natishkumarsing/model/product.dart';
-import 'package:rest_api_with_natishkumarsing/model/users.dart';
+import 'package:rest_api_with_natishkumarsing/model/user.dart';
 
 class UserApi {
-  List<Users> users = [];
-  Future<List<Users>> fetchUserData() async {
+  List<User> users = [];
+  Future<List<User>> fetchUserData() async {
     debugPrint('fetchUser');
     // https://randomuser.me/api/?results=10
-    const userBaseUrl = 'https://randomuser.me/api/?results=10';
+    const userBaseUrl = 'https://randomuser.me/api/?results=20';
     final uriParse = Uri.parse(userBaseUrl);
     Response response = await http.get(uriParse);
     final body = response.body;
     // print(body);
     final json = jsonDecode(body);
     final result = json['results'] as List<dynamic>;
-    print('json: $result');
+    // print('json: $result');
     // for (Map i in result) {
     //   users.add(Users(
     //       gender: i['gender'],
@@ -41,9 +41,10 @@ class UserApi {
     // if (response.statusCode == 20
     //0) {
     for (Map<String, dynamic> i in result) {
-      // users.add(Users.fromJson(i));
-      users.add(Users.fromJson(i));
+      users.add(User.fromJson(i));
     }
+
+    // print('Users: ${users.map((e) => e.largeImge)}');
     // }
 
     return users;
